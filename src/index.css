@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+/* ---------- Design tokens → Tailwind classes ---------- */
+@theme {
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-pixel: "Press Start 2P", "JetBrains Mono", monospace;
+
+  --color-ok: #39ff7a;
+  --color-err: #ff4d5e;
+  --color-warn: #ffcc33;
+
+  --animate-blink: blink 1s steps(1) infinite;
+  --animate-flicker: flicker 4s steps(1) infinite;
+  --animate-log-in: log-in 0.25s steps(3) both;
+  --animate-roll: roll 7s linear infinite;
+
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes flicker { 0%, 100% { opacity: 1; } 47% { opacity: 0.92; } 48% { opacity: 1; } 83% { opacity: 0.95; } }
+  @keyframes log-in { from { opacity: 0; transform: translateX(-6px); } }
+  @keyframes roll { from { transform: translateY(-20vh); } to { transform: translateY(120vh); } }
+}
+
+/* Phosphor color. App.jsx swaps these when a role is picked. */
+:root {
+  --accent: #39ff7a;
+  --accent2: #b6ffcf;
+}
+
+html {
+  background: #030603;
+  color-scheme: dark;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  @apply bg-[#030603] font-mono text-(--accent) antialiased;
+}
+
+::selection { background: var(--accent); color: #030603; }
+
+/* ---------- Reusable terminal pieces ---------- */
+@layer components {
+  /* Glowing phosphor text */
+  .glow { text-shadow: 0 0 6px color-mix(in srgb, var(--accent) 70%, transparent), 0 0 18px color-mix(in srgb, var(--accent) 25%, transparent); }
+
+  /* Double-line terminal window with an optional title sitting on the border */
+  .term-box {
+    @apply relative border-[3px] border-double border-(--accent) bg-black/60 p-4;
+    box-shadow: 0 0 18px -6px var(--accent), inset 0 0 24px -12px var(--accent);
+  }
+  .term-box > .term-title {
+    @apply absolute -top-[0.7em] left-3 bg-[#030603] px-2 font-pixel text-[9px] leading-[1.4em] tracking-wider text-(--accent);
+  }
+
+  /* Thin inner panel used inside demos */
+  .panel { @apply border border-(--accent)/35 bg-(--accent)/[0.04]; }
+
+  /* Dim secondary text */
+  .dim { @apply text-(--accent)/55; }
+}
+
+/* ---------- CRT screen effects (one fixed overlay, no repaint cost) ---------- */
+.crt-scanlines {
+  background: repeating-linear-gradient(to bottom, rgb(0 0 0 / 0) 0 2px, rgb(0 0 0 / 0.28) 2px 3px);
+}
+.crt-vignette {
+  background: radial-gradient(ellipse at center, transparent 55%, rgb(0 0 0 / 0.75) 100%);
+}
+.crt-rollbar {
+  height: 18vh;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--accent) 6%, transparent), transparent);
+}
+
+/* Request "packet" in the Software demo: transform-only, travels its track width */
+.packet { animation: travel 0.9s steps(12) infinite; }
+@keyframes travel {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(100cqw - 100%)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-flicker, .animate-roll, .packet { animation: none; }
+}
