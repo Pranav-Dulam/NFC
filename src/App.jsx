@@ -66,9 +66,8 @@ export default function App() {
     setStep('boot')
   }
 
-  // Try to close the tab (only works if a script opened it), then power the "monitor" off
+  // Power the "monitor" off (ShutDown then tries to close the tab)
   function exit() {
-    window.close()
     setStep('off')
   }
 

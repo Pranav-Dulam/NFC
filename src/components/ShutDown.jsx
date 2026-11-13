@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import * as m from 'motion/react-m'
 import { Cursor } from './Screen'
 
@@ -7,6 +8,13 @@ import { Cursor } from './Screen'
  * visitor they're done.
  */
 export default function ShutDown({ onReboot }) {
+  // Let the power-off animation play, then try to close the tab.
+  // If the browser blocks it, the "you can close this tab" message stays up.
+  useEffect(() => {
+    const id = setTimeout(() => window.close(), 2200)
+    return () => clearTimeout(id)
+  }, [])
+
   return (
     <m.section
       className="fixed inset-0 z-10 grid place-items-center bg-black"
