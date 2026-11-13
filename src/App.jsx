@@ -8,6 +8,7 @@ import Done from './components/Done'
 import FitReport from './components/FitReport'
 import Progress from './components/Progress'
 import RolePicker from './components/RolePicker'
+import ShutDown from './components/ShutDown'
 import { DEFAULT_THEME, ROLES } from './config'
 import { sendTap } from './lib/api'
 import { DEMO } from './lib/device'
@@ -57,6 +58,20 @@ export default function App() {
     setStep('demo')
   }
 
+  // Back to a fresh start, as if the card was just tapped
+  function restart() {
+    setRoleId(null)
+    setTried([])
+    setName(null)
+    setStep('boot')
+  }
+
+  // Try to close the tab (only works if a script opened it), then power the "monitor" off
+  function exit() {
+    window.close()
+    setStep('off')
+  }
+
   const markTried = (id) => setTried((t) => (t.includes(id) ? t : [...t, id]))
   const triedLabels = tried.map((id) => ROLES.find((r) => r.id === id).label)
 
@@ -66,14 +81,14 @@ export default function App() {
       {/* Respect the phone's "Reduce Motion" accessibility setting */}
       <MotionConfig reducedMotion="user">
         <main style={theme} className="relative min-h-dvh overflow-x-hidden bg-[#030603] text-(--accent)">
-          <Progress
+          {step !== 'off' && <Progress
             index={STEPS.indexOf(step)}
             right={
               <button type="button" onClick={toggleSound} aria-pressed={sound} className="px-1 py-1 uppercase">
                 snd:{sound ? <span className="text-(--accent)">on</span> : <span className="dim">off</span>}
               </button>
             }
-          />
+          />}
 
           {/* mode="wait": the old screen glitches OUT, then the new one switches ON */}
           <AnimatePresence mode="wait" onExitComplete={() => window.scrollTo(0, 0)}>
@@ -119,15 +134,11 @@ export default function App() {
                 key="done"
                 name={name}
                 onExplore={() => setStep('pick')}
-                onRestart={() => {
-                  // back to a fresh start, as if the card was just tapped
-                  setRoleId(null)
-                  setTried([])
-                  setName(null)
-                  setStep('boot')
-                }}
+                onExit={exit}
               />
             )}
+
+            {step === 'off' && <ShutDown key="off" onReboot={restart} />}
           </AnimatePresence>
 
           {DEMO && (

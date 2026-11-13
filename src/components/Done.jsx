@@ -4,7 +4,7 @@ import Screen, { Box, Cursor, Reveal } from './Screen'
 import Type from './Type'
 import { PROFILE } from '../config'
 
-export default function Done({ name, onExplore, onRestart }) {
+export default function Done({ name, onExplore, onExit }) {
   const first = name?.split(/\s+/)[0]
 
   return (
@@ -67,8 +67,8 @@ export default function Done({ name, onExplore, onRestart }) {
           <Button variant="menu" size="sm" onClick={onExplore}>
             Try another role
           </Button>
-          <Button variant="menu" size="sm" onClick={onRestart}>
-            Restart
+          <Button variant="menu" size="sm" onClick={onExit}>
+            Exit
           </Button>
         </div>
       </Reveal>
